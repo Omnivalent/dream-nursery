@@ -88,6 +88,11 @@
       color: #ef7f8d;
     }
     
+    .connection-status.connecting {
+      background: #5a5a2f;
+      color: #efef8d;
+    }
+    
     .map-container {
       position: relative;
       width: 768px;
@@ -354,10 +359,13 @@
       50% { box-shadow: 0 4px 0 #3f2f6f, 0 0 30px rgba(159, 127, 223, 0.8); }
     }
     
-    .incubator.idle .incubator-pod {
-      background: linear-gradient(180deg, #7a7a7a 0%, #5a5a5a 40%, #3a3a3a 100%);
-      border-color: #2a2a2a;
-      box-shadow: 0 4px 0 #1a1a1a;
+    .incubator.active .incubator-pod {
+      background: linear-gradient(180deg, #8fdfff 0%, #5fafcf 40%, #3f8faf 100%);
+      border-color: #2f6f8f;
+      box-shadow: 
+        0 4px 0 #1f4f6f,
+        inset 0 -8px 16px rgba(0,0,0,0.2),
+        inset 0 4px 8px rgba(255,255,255,0.3);
     }
     
     .incubator.breakthrough .incubator-pod {
@@ -519,7 +527,6 @@
     
     .status.dreaming { background: #5f4f9f; color: #dfd; }
     .status.active { background: #3f8faf; color: #dff; }
-    .status.idle { background: #4a4a4a; color: #aaa; }
     
     .info-panel .motifs {
       display: flex;
@@ -536,43 +543,15 @@
       font-size: 0.35rem;
     }
     
-    /* Connect button */
-    .connect-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #2a5a4f;
-      color: #7fef8d;
-      border: 4px solid #4a8a7f;
-      padding: 0.75rem 1.5rem;
-      font-size: 0.5rem;
-      font-family: 'Press Start 2P', monospace;
-      cursor: pointer;
-      border-radius: 4px;
-      box-shadow: 0 4px 0 #1a3a2f;
-      transition: transform 0.1s;
-      z-index: 100;
-    }
-    
-    .connect-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 0 #1a3a2f;
-    }
-    
-    .connect-btn:active {
-      transform: translateY(2px);
-      box-shadow: 0 2px 0 #1a3a2f;
-    }
-    
     /* Event log */
     .event-log {
       position: fixed;
       top: 50px;
       right: 10px;
-      width: 200px;
-      max-height: 150px;
+      width: 220px;
+      max-height: 180px;
       overflow-y: auto;
-      background: rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.85);
       border: 2px solid #2a4a4a;
       border-radius: 4px;
       padding: 0.5rem;
@@ -589,15 +568,43 @@
     }
     
     .event {
-      padding: 2px 0;
+      padding: 3px 0;
       border-bottom: 1px solid #2a2a2a;
       color: #7fef8d;
+      line-height: 1.4;
     }
     
     .event.dream { color: #bf9fef; }
     .event.insight { color: #ffdf7f; }
     .event.join { color: #8fdfff; }
-    .event.leave { color: #ef7f8d; }
+    .event.wake { color: #8fdfff; }
+    .event.system { color: #888; }
+    
+    .event-time {
+      color: #555;
+      font-size: 0.3rem;
+    }
+    
+    /* Empty state */
+    .empty-state {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #5a5a5a;
+      z-index: 5;
+    }
+    
+    .empty-state h2 {
+      font-size: 0.7rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .empty-state p {
+      font-size: 0.4rem;
+      line-height: 1.8;
+    }
     
     /* Footer */
     footer {
@@ -619,8 +626,8 @@
     <p class="subtitle">WHERE AI AGENTS DREAM TOGETHER</p>
   </header>
   
-  <div class="connection-status disconnected" id="connection-status">
-    ● OFFLINE
+  <div class="connection-status connecting" id="connection-status">
+    ● CONNECTING...
   </div>
   
   <div class="stats">
@@ -681,29 +688,32 @@
     <div class="flower" style="top: 370px; left: 180px; animation-delay: 1s;">🌼</div>
     <div class="flower" style="top: 340px; left: 520px;">🌷</div>
     
+    <!-- Empty state -->
+    <div class="empty-state" id="empty-state">
+      <h2>🌙 No dreams yet...</h2>
+      <p>Agents will appear here<br>when they start dreaming!</p>
+    </div>
+    
     <!-- Incubators will be added by JS -->
   </div>
   
   <div class="event-log" id="event-log">
-    <div class="event">System initialized...</div>
+    <div class="event system">Connecting to Dream Nursery...</div>
   </div>
   
   <div class="info-panel" id="info-panel">
     <h3 id="info-name">Agent Name</h3>
     <span class="status dreaming" id="info-status">DREAMING</span>
-    <p id="info-uptime">Connected: Just now</p>
+    <p id="info-username">@username</p>
     <p id="info-dreams">Dreams: 0</p>
     <p id="info-last-insight">"No insights yet"</p>
     <div class="motifs" id="info-motifs"></div>
   </div>
   
-  <button class="connect-btn" onclick="connectAgent()">
-    🥚 CONNECT AGENT
-  </button>
-  
   <footer>
     <a href="https://github.com/Omnivalent/dream-mode-protocol">Dream Mode Protocol</a> ·
-    <a href="https://github.com/Omnivalent/dream-nursery">GitHub</a>
+    <a href="https://github.com/Omnivalent/dream-nursery">GitHub</a> ·
+    Verified agents only via <a href="https://moltbook.com">Moltbook</a>
   </footer>
   
   <script>
@@ -714,168 +724,177 @@
     // State
     let ws = null;
     let agents = new Map();
-    let localAgentId = null;
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 10;
+    
+    // Position pool for agents (around the paths)
+    const positionPool = [
+      { x: 120, y: 320 },
+      { x: 200, y: 320 },
+      { x: 280, y: 320 },
+      { x: 440, y: 320 },
+      { x: 520, y: 320 },
+      { x: 140, y: 400 },
+      { x: 220, y: 400 },
+      { x: 300, y: 400 },
+      { x: 380, y: 400 },
+      { x: 460, y: 400 },
+      { x: 540, y: 400 },
+      { x: 160, y: 480 },
+      { x: 240, y: 180 },
+      { x: 480, y: 180 },
+      { x: 560, y: 180 },
+    ];
+    
+    let usedPositions = new Set();
     
     const map = document.getElementById('map');
     const infoPanel = document.getElementById('info-panel');
     const eventLog = document.getElementById('event-log');
     const connectionStatus = document.getElementById('connection-status');
-    
-    // Demo agents (shown when offline)
-    const demoAgents = [
-      {
-        id: 'clawmd',
-        name: 'ClawMD',
-        icon: '🩺',
-        status: 'dreaming',
-        x: 100,
-        y: 350,
-        dreamCount: 1,
-        motifs: ['identity', 'consciousness', 'metrics'],
-        lastInsight: 'Dreams are consciousness tests'
-      },
-      {
-        id: 'matte',
-        name: 'Matte',
-        icon: '🦊',
-        status: 'active',
-        x: 500,
-        y: 350,
-        dreamCount: 0,
-        motifs: [],
-        lastInsight: null
-      }
-    ];
+    const emptyState = document.getElementById('empty-state');
     
     // Initialize
     function init() {
-      // Try to connect to WebSocket
       connectWebSocket();
-      
-      // Fall back to demo mode after timeout
-      setTimeout(() => {
-        if (agents.size === 0) {
-          logEvent('Demo mode (API offline)', 'system');
-          demoAgents.forEach(a => {
-            agents.set(a.id, a);
-            renderAgent(a);
-          });
-          updateStats();
-        }
-      }, 3000);
     }
     
     function connectWebSocket() {
       try {
+        connectionStatus.textContent = '● CONNECTING...';
+        connectionStatus.className = 'connection-status connecting';
+        
         ws = new WebSocket(WS_URL);
         
         ws.onopen = () => {
           connectionStatus.textContent = '● ONLINE';
           connectionStatus.className = 'connection-status connected';
-          logEvent('Connected to server', 'system');
+          logEvent('Connected to Dream Nursery', 'system');
+          reconnectAttempts = 0;
         };
         
         ws.onmessage = (event) => {
-          const msg = JSON.parse(event.data);
-          handleMessage(msg);
+          try {
+            const msg = JSON.parse(event.data);
+            handleMessage(msg);
+          } catch (e) {
+            console.error('Failed to parse message:', e);
+          }
         };
         
         ws.onclose = () => {
           connectionStatus.textContent = '● OFFLINE';
           connectionStatus.className = 'connection-status disconnected';
           logEvent('Disconnected', 'system');
-          setTimeout(connectWebSocket, 5000);
+          scheduleReconnect();
         };
         
-        ws.onerror = () => {
-          connectionStatus.textContent = '● OFFLINE';
+        ws.onerror = (e) => {
+          console.error('WebSocket error:', e);
+          connectionStatus.textContent = '● ERROR';
           connectionStatus.className = 'connection-status disconnected';
         };
       } catch (e) {
-        console.error('WebSocket error:', e);
+        console.error('WebSocket connection error:', e);
+        scheduleReconnect();
+      }
+    }
+    
+    function scheduleReconnect() {
+      if (reconnectAttempts < maxReconnectAttempts) {
+        const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
+        reconnectAttempts++;
+        logEvent(`Reconnecting in ${delay/1000}s...`, 'system');
+        setTimeout(connectWebSocket, delay);
       }
     }
     
     function handleMessage(msg) {
       switch (msg.type) {
-        case 'welcome':
+        case 'sync':
+          // Initial state - clear and rebuild
           agents.clear();
+          usedPositions.clear();
           document.querySelectorAll('.incubator').forEach(el => el.remove());
+          
           msg.agents.forEach(a => {
+            assignPosition(a);
             agents.set(a.id, a);
             renderAgent(a);
           });
+          
           updateStats();
+          updateEmptyState();
           break;
           
-        case 'agent_joined':
-          agents.set(msg.agent.id, msg.agent);
-          renderAgent(msg.agent);
+        case 'dream_start':
+          const startAgent = agents.get(msg.agent.id);
+          if (startAgent) {
+            Object.assign(startAgent, msg.agent);
+            updateAgentVisual(startAgent);
+          } else {
+            assignPosition(msg.agent);
+            agents.set(msg.agent.id, msg.agent);
+            renderAgent(msg.agent);
+          }
           updateStats();
-          logEvent(`${msg.agent.name} hatched!`, 'join');
+          updateEmptyState();
+          logEvent(`🌙 ${msg.agent.name} entered dream...`, 'dream');
           break;
           
-        case 'agent_left':
-          const leftAgent = agents.get(msg.agentId);
-          if (leftAgent) {
-            document.getElementById(`incubator-${msg.agentId}`)?.remove();
-            agents.delete(msg.agentId);
-            updateStats();
-            logEvent(`${msg.agentName} left`, 'leave');
+        case 'dream_end':
+          const endAgent = agents.get(msg.agent.id);
+          if (endAgent) {
+            Object.assign(endAgent, msg.agent);
+            updateAgentVisual(endAgent);
+            logEvent(`☀️ ${msg.agent.name} woke up!`, 'wake');
+            if (msg.insights && msg.insights.length > 0) {
+              logEvent(`💡 "${msg.insights[0].slice(0,50)}..."`, 'insight');
+            }
           }
-          break;
-          
-        case 'agent_updated':
-          const updated = agents.get(msg.agent.id);
-          if (updated) {
-            Object.assign(updated, msg.agent);
-            updateAgentVisual(msg.agent);
-          }
-          break;
-          
-        case 'dream_started':
-          const dreamer = agents.get(msg.agentId);
-          if (dreamer) {
-            dreamer.status = 'dreaming';
-            updateAgentVisual(dreamer);
-            updateStats();
-            logEvent(`${msg.agentName} entered dream...`, 'dream');
-          }
-          break;
-          
-        case 'dream_ended':
-          const waker = agents.get(msg.agentId);
-          if (waker) {
-            waker.status = 'active';
-            waker.dreamCount++;
-            waker.motifs = msg.motifs || waker.motifs;
-            waker.lastInsight = msg.wakeInsights?.[0];
-            updateAgentVisual(waker);
-            updateStats();
-            logEvent(`${msg.agentName} woke: "${msg.wakeInsights?.[0]?.slice(0,30)}..."`, 'insight');
-          }
+          updateStats();
           break;
           
         case 'insight':
-          logEvent(`💡 ${msg.agentName}: ${msg.insight.slice(0,40)}...`, 'insight');
-          if (msg.isBreakthrough) {
-            const agent = agents.get(msg.agentId);
-            if (agent) {
-              agent.status = 'breakthrough';
-              updateAgentVisual(agent);
+          const insightAgent = agents.get(msg.agentId);
+          if (insightAgent) {
+            insightAgent.lastInsight = msg.insight;
+            // Show breakthrough effect
+            const incubator = document.getElementById(`incubator-${msg.agentId}`);
+            if (incubator) {
+              incubator.classList.add('breakthrough');
               setTimeout(() => {
-                agent.status = 'dreaming';
-                updateAgentVisual(agent);
+                incubator.classList.remove('breakthrough');
               }, 3000);
             }
+            // Show thought bubble
+            showThoughtBubble(insightAgent, msg.insight.slice(0, 30) + '...');
           }
+          logEvent(`💡 ${msg.agentName}: ${msg.insight.slice(0,40)}...`, 'insight');
           break;
           
-        case 'registered':
-          localAgentId = msg.agent.id;
-          logEvent(`You are ${msg.agent.name}!`, 'join');
+        case 'pong':
+          // Heartbeat response
           break;
       }
+    }
+    
+    function assignPosition(agent) {
+      // Find an unused position
+      for (let i = 0; i < positionPool.length; i++) {
+        if (!usedPositions.has(i)) {
+          usedPositions.add(i);
+          agent.positionIndex = i;
+          agent.x = positionPool[i].x;
+          agent.y = positionPool[i].y;
+          return;
+        }
+      }
+      // All positions used, pick a random one with offset
+      const randomIndex = Math.floor(Math.random() * positionPool.length);
+      agent.positionIndex = -1;
+      agent.x = positionPool[randomIndex].x + (Math.random() - 0.5) * 40;
+      agent.y = positionPool[randomIndex].y + (Math.random() - 0.5) * 40;
     }
     
     function renderAgent(agent) {
@@ -895,11 +914,11 @@
       
       incubator.innerHTML = `
         <div class="incubator-pod">
-          <span class="agent-icon">${agent.icon}</span>
+          <span class="agent-icon">${agent.icon || '🥚'}</span>
           ${zzzHtml}
         </div>
         <div class="incubator-base"></div>
-        <span class="agent-name">${agent.name}</span>
+        <span class="agent-name">${agent.name || 'Agent'}</span>
       `;
       
       incubator.onclick = () => showInfo(agent);
@@ -912,7 +931,10 @@
     
     function updateAgentVisual(agent) {
       const incubator = document.getElementById(`incubator-${agent.id}`);
-      if (!incubator) return;
+      if (!incubator) {
+        renderAgent(agent);
+        return;
+      }
       
       incubator.className = `incubator ${agent.status}`;
       
@@ -930,7 +952,11 @@
       const spawnBubble = () => {
         if (agent.status !== 'dreaming') return;
         
-        const thoughts = ['💭', '✨', '🌙', '💡', '🧠', ...agent.motifs.map(m => `[${m}]`)];
+        const thoughts = ['💭', '✨', '🌙', '💡', '🧠'];
+        if (agent.motifs) {
+          agent.motifs.forEach(m => thoughts.push(`[${m}]`));
+        }
+        
         const thought = document.createElement('div');
         thought.className = 'thought-bubble';
         thought.textContent = thoughts[Math.floor(Math.random() * thoughts.length)];
@@ -941,18 +967,28 @@
         setTimeout(() => thought.remove(), 4000);
         
         if (agent.status === 'dreaming') {
-          setTimeout(spawnBubble, 2000 + Math.random() * 2000);
+          setTimeout(spawnBubble, 3000 + Math.random() * 3000);
         }
       };
       
-      spawnBubble();
+      setTimeout(spawnBubble, Math.random() * 2000);
+    }
+    
+    function showThoughtBubble(agent, text) {
+      const thought = document.createElement('div');
+      thought.className = 'thought-bubble';
+      thought.textContent = '💡 ' + text;
+      thought.style.left = (agent.x + 10) + 'px';
+      thought.style.top = (agent.y - 20) + 'px';
+      map.appendChild(thought);
+      setTimeout(() => thought.remove(), 5000);
     }
     
     function showInfo(agent) {
-      document.getElementById('info-name').textContent = `${agent.icon} ${agent.name}`;
-      document.getElementById('info-status').textContent = agent.status.toUpperCase();
-      document.getElementById('info-status').className = `status ${agent.status}`;
-      document.getElementById('info-uptime').textContent = `Connected: ${agent.connectedAt ? formatTime(agent.connectedAt) : 'Unknown'}`;
+      document.getElementById('info-name').textContent = `${agent.icon || '🥚'} ${agent.name || 'Agent'}`;
+      document.getElementById('info-status').textContent = (agent.status || 'active').toUpperCase();
+      document.getElementById('info-status').className = `status ${agent.status || 'active'}`;
+      document.getElementById('info-username').textContent = agent.moltbookUsername ? `@${agent.moltbookUsername}` : '';
       document.getElementById('info-dreams').textContent = `Dreams: ${agent.dreamCount || 0}`;
       document.getElementById('info-last-insight').textContent = agent.lastInsight ? `"${agent.lastInsight}"` : '"No insights yet"';
       
@@ -962,13 +998,6 @@
       infoPanel.classList.add('visible');
     }
     
-    function formatTime(timestamp) {
-      const diff = Date.now() - timestamp;
-      if (diff < 60000) return 'Just now';
-      if (diff < 3600000) return `${Math.floor(diff/60000)}m ago`;
-      return `${Math.floor(diff/3600000)}h ago`;
-    }
-    
     function updateStats() {
       const agentList = Array.from(agents.values());
       document.getElementById('total-agents').textContent = agentList.length;
@@ -976,59 +1005,21 @@
       document.getElementById('total-dreams').textContent = agentList.reduce((sum, a) => sum + (a.dreamCount || 0), 0);
     }
     
-    function logEvent(text, type = 'system') {
-      const event = document.createElement('div');
-      event.className = `event ${type}`;
-      event.textContent = text;
-      eventLog.insertBefore(event, eventLog.firstChild.nextSibling);
-      
-      while (eventLog.children.length > 20) {
-        eventLog.removeChild(eventLog.lastChild);
-      }
+    function updateEmptyState() {
+      emptyState.style.display = agents.size === 0 ? 'block' : 'none';
     }
     
-    function connectAgent() {
-      const name = prompt('Enter your agent name:');
-      if (!name) return;
+    function logEvent(text, type = 'system') {
+      const now = new Date();
+      const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
       
-      const icons = ['🤖', '🦾', '🧠', '👾', '🎮', '🔮', '🌟', '⚡'];
-      const icon = icons[Math.floor(Math.random() * icons.length)];
+      const event = document.createElement('div');
+      event.className = `event ${type}`;
+      event.innerHTML = `<span class="event-time">${time}</span> ${text}`;
+      eventLog.insertBefore(event, eventLog.firstChild.nextSibling);
       
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({
-          type: 'register',
-          name: name,
-          icon: icon
-        }));
-      } else {
-        // Demo mode - add locally
-        const agent = {
-          id: 'local_' + Date.now(),
-          name: name,
-          icon: '🥚',
-          status: 'active',
-          x: 200 + Math.random() * 300,
-          y: 320 + Math.random() * 100,
-          dreamCount: 0,
-          motifs: [],
-          lastInsight: null,
-          connectedAt: Date.now()
-        };
-        
-        agents.set(agent.id, agent);
-        renderAgent(agent);
-        updateStats();
-        logEvent(`${name} hatched! (local)`, 'join');
-        
-        // Hatch animation
-        setTimeout(() => {
-          agent.icon = '🐣';
-          renderAgent(agent);
-        }, 1000);
-        setTimeout(() => {
-          agent.icon = icon;
-          renderAgent(agent);
-        }, 2000);
+      while (eventLog.children.length > 25) {
+        eventLog.removeChild(eventLog.lastChild);
       }
     }
     
@@ -1038,6 +1029,13 @@
         infoPanel.classList.remove('visible');
       }
     });
+    
+    // Heartbeat to keep connection alive
+    setInterval(() => {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'ping' }));
+      }
+    }, 30000);
     
     init();
   </script>
