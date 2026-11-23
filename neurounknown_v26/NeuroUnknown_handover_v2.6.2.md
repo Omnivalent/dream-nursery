@@ -1,7 +1,7 @@
-# NeuroUnknown v2.6.1: handover, limitations and how to improve (23 Nov 2026)
+# NeuroUnknown v2.6.2: handover, limitations and how to improve (23 Nov 2026)
 
-Site: https://omnivalent.github.io/neurounknown/ · current version 2.6.1 (site commit `29e5439`).
-Rollback points: v2.6 = `70494cf`, v2.5 = `fb628ae`, v2.4 = `4aafa1b`, v2.3 = `be31c24`.
+Site: https://omnivalent.github.io/neurounknown/ · current version 2.6.2.
+Rollback points: v2.6.1 = `29e5439`, v2.6 = `70494cf`, v2.5 = `fb628ae`, v2.4 = `4aafa1b`, v2.3 = `be31c24`.
 
 ## 1. What changed today (v2.5 to v2.6.1)
 
@@ -14,7 +14,10 @@ Rollback points: v2.6 = `70494cf`, v2.5 = `fb628ae`, v2.4 = `4aafa1b`, v2.3 = `b
 | Cards | Tabs on neurotransmitter cards; previous/next through systems, diseases, neurotransmitters; glowing nodes on involved structures |
 | Guided tour | 6 steps, shown once, restart with "Guided tour" |
 | Phone (2.6.1) | The 3D brain stays pinned at the top while the list and info card scroll under it; Layers, MRI slices in 3D and Sources fold into buttons under the brain |
+| Phone (2.6.2) | After review: opened panels land below the pinned brain even on short screens (320 × 568); Layers and MRI buttons appear only in the 3D view; Sources opens right under the brain |
 | Promo | 30-second 1080p video (atlas + questions) |
+
+Wording correction: the MRI view has **three linked MRI views (axial, coronal, sagittal) plus a crosshair information panel**, not four MRI windows.
 
 ## 2. Known limitations
 
@@ -55,7 +58,7 @@ Rollback points: v2.6 = `70494cf`, v2.5 = `fb628ae`, v2.4 = `4aafa1b`, v2.3 = `b
 
 ## 4. Suggestions to make the site better (in order of value)
 
-1. **Expert review round.** One neurologist, one neuroradiologist and one psychiatrist review lesion effects, disease pages, neurotransmitter cards and 100 sampled questions; corrections logged publicly. This is the single biggest credibility gain.
+1. **Expert review round (before adding more cases).** First task: a neuroradiologist selects a cranial nerve and a brainstem structure on a phone and says which features are schematic and which come from atlas data, testing whether that distinction is clear while learning, even with Sources folded away (each card already shows a 'schematic' badge and a 'Shape:' source line). One neurologist, one neuroradiologist and one psychiatrist review lesion effects, disease pages, neurotransmitter cards and 100 sampled questions; corrections logged publicly. This is the single biggest credibility gain.
 2. **Real brainstem nuclei.** Replace the schematic nuclei with Brainstem Navigator (if the licence allows), and add the locus coeruleus, inferior olive and MLF.
 3. **Disease circuits with sources.** For each disease, a short circuit (for example face processing in autism) drawn with nodes and flowing lines, each link backed by a PubMed reference, plus Findings / Symptoms / Treatment tabs like the reference site.
 4. **Lighter phone load.** Compressed meshes (Draco or meshopt), WebP slices, a service worker cache. Target: under 8 MB on first load.
