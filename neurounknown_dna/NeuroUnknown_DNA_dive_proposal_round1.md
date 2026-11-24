@@ -22,7 +22,7 @@ So the design goal is: **make it feel like diving, and make the map itself teach
 
 - 19,203 protein-coding genes placed on GRCh38 (GENCODE v43): chromosome, start, end, strand, cytoband name, gene class, name, constraint (gnomAD v4.1 LOEUF), our own scores.
 - Three levels already exist: all 24 chromosomes → one chromosome bar with its brain-disease genes → an "expert view" track that zooms along the chromosome.
-- A catalogue linking genes to our 18 diagnoses, each row with an evidence label and a source (OMIM, Orphanet, ClinGen, rare-variant studies, GWAS-derived), with PubMed record counts.
+- A catalogue of 905 gene-diagnosis rows, each with an evidence label, a source and PubMed record counts. **It covers only 7 of our 18 diagnoses** (rows: autism 696, depression 58, ALS 45, Alzheimer's 44, schizophrenia 31, Parkinson's 28, bipolar disorder 3). The other 11 diagnoses have brain areas and treatment pages but no gene rows yet. Evidence labels in use today: Mendelian (database) 773 rows (4 more combined with GWAS), GWAS locus (nearest/coding gene) 93, database link (weak for psychiatric traits) 15, rare-variant exome-wide or FDR<5% (SCHEMA) 18, structural variant 1, rare-variant exome (BipEx) 1. The autism rows are mostly database entries whose disease name can be broader than autism; the site already flags this.
 - A 100-protein library with a 3D protein viewer (3Dmol) already on the site.
 - The 3D brain atlas has the interaction grammar we would reuse: camera glide, fades, linked panels, tap labels, guided tour, phone layout.
 
@@ -62,9 +62,11 @@ Never merged into one score, never one colour for "linked":
 | D. Regulatory and expression | where and when the gene is active | GTEx, Siletti 2023, ENCODE (to add) | "Active in these brain regions" |
 | E. Model organism | mouse knock-out phenotype | MGI (already in data) | "In mice, loss causes ..." |
 
+**Finding about our own data:** our current catalogue already labels 93 GWAS rows as "GWAS locus (nearest/coding gene)". That is honest wording, but it means the existing gene cards can be read as "gene for X". The proposal would fix this on the existing cards too, not only on new ones.
+
 Rules we already follow and would keep: **no discovery claims**; statements cite PubMed; unverified items are labelled; the conservative interpretation wins. New rules proposed: GWAS loci are drawn as **regions with a width**, never as a single pin; where a gene is assigned to a locus, show how (nearest gene vs a published locus-to-gene score such as Open Targets L2G, Mountjoy 2021, PMID 34711957) and label "nearest gene" as such; always show ancestry of the study population when the source provides it, because most GWAS cohorts are of European ancestry.
 
-**Which traits.** Start with the 18 diagnoses already on the site plus 3 to 5 neutral teaching traits chosen to show polygenicity (candidates, each needing a GWAS Catalog record check: height as the anchor example; chronotype; handedness). **Proposed exclusion list:** no intelligence, educational attainment, sexual orientation, ancestry, or other behavioural or social traits that invite misuse. We ask reviewers whether this list is right.
+**Which traits.** Start with the 7 diagnoses that already have gene rows, plus 3 to 5 neutral teaching traits chosen to show polygenicity (candidates, each needing a GWAS Catalog record check: height as the anchor example; chronotype; handedness). **Proposed exclusion list:** no intelligence, educational attainment, sexual orientation, ancestry, or other behavioural or social traits that invite misuse. We ask reviewers whether this list is right.
 
 ## 5. Architecture for a static site (GitHub Pages, no server, no accounts, no analytics)
 
@@ -77,7 +79,7 @@ Rules we already follow and would keep: **no discovery claims**; statements cite
 ## 6. What was verified in this draft, and what was not
 
 **Verified (24 Nov 2026):**
-- The Gene atlas facts in section 2 (read from `genome.json`, the catalogue CSV and the page code).
+- The Gene atlas facts in section 2 (read from `genome.json`, the catalogue CSV, with row counts computed on 24 Nov 2026, and the page code). The site's scoring code uses GTEx and neuron-versus-glia specificity; I did not check the Siletti 2023 usage beyond it being listed among the site's data sources.
 - PubMed records exist and match their descriptions: Yengo 2022 height GWAS (36224396; the numbers quoted in section 1 are from its abstract); Sollis 2023 GWAS Catalog (36350656); Mountjoy 2021 Open Targets locus-to-gene (34711957); Karczewski 2020 gnomAD constraint (32461654); GTEx Consortium 2020 (32913098); Siletti 2023 human brain cell atlas (37824663); Varadi 2022 AlphaFold DB (34791371); Visscher 2017 "10 years of GWAS discovery" (28686856); ENCODE 2020 (32728249). Only titles, authors, journals and (for height) the abstract were checked; I have not read these papers in full.
 
 **NOT verified:**
@@ -97,7 +99,7 @@ Rules we already follow and would keep: **no discovery claims**; statements cite
 
 ## 8. Phasing with decision points
 
-- **Phase 1, no new data hosts:** the continuous zoom and flights across the three levels we already have (genome → chromosome → region), a gene card with tiers from the existing catalogue, the tutorial, the phone layout. Cytoband names only. *Decision: do reviewers think this is already worth shipping?*
+- **Phase 1, no new data hosts:** the continuous zoom and flights across the three levels we already have (genome → chromosome → region), a gene card with tiers from the existing catalogue (7 diagnoses), the tutorial, the phone layout, and rewording the existing GWAS rows. Cytoband names only. *Decision: do reviewers think this is already worth shipping?*
 - **Phase 2, needs licence checks and a refresh route:** cytoband ideograms, GENCODE exon structure (Level 3), GWAS tier B as regions with L2G labels, the 3 to 5 teaching traits.
 - **Phase 3:** coding sequence → protein for the gene set, and the brain bridge with a coarse region mapping (lobes, hippocampus, amygdala, thalamus, striatum, cerebellum, brainstem) labelled approximate.
 - **Phase 4, optional:** schematic cinematic intro; short ad video.
@@ -108,7 +110,7 @@ Rules we already follow and would keep: **no discovery claims**; statements cite
 1. Is the five-tier wording safe for medical students and the public? Rewrite any sentence that could mislead.
 2. Is the proposed exclusion list of traits right? What should be added or removed?
 3. Is "monogenic = a place, polygenic = a landscape" an accurate and fair teaching frame, and where does it oversimplify (for example oligogenic, structural variants, epigenetics)?
-4. Which diagnoses on our list have a Mendelian subset that needs its own wording (for example early-onset Alzheimer's, familial ALS, Huntington's, some epilepsies)?
+4. Which of the 18 diagnoses on our list have a Mendelian subset that needs its own wording (for example early-onset Alzheimer's, familial ALS, Huntington's, some epilepsies)?
 5. What would you test in the tutorial missions to check that a learner understood association versus cause?
 6. What is missing from section 7?
 
